@@ -1,0 +1,10 @@
+google-adk
+a2a-sdk
+google-generativeai
+requests
+uvicorn
+fastapi
+httpx
+typing-extensions
+gitingest
+streamlit
