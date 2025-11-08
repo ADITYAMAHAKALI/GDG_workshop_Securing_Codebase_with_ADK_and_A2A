@@ -37,6 +37,13 @@
 <li><strong>gitingest</strong> – ingest GitHub repos without manual cloning</li>
 <li><strong>Streamlit</strong> – simple web UI</li>
 </ul>
+  <p style="text-align: center;">
+    <img
+      src="img/High_Level_Architecture.png"
+      alt="High level architecture of the multi-agent security scanner"
+      style="max-width: 100%; height: auto; border-radius: 8px;"
+    >
+  </p>
 <p>The pipeline:</p>
 <ol type="1">
 <li><strong>Scanner Agent</strong> → ingests a GitHub repo (<code>gitingest</code>)</li>
@@ -313,17 +320,10 @@ report_md   = await _send_text_message(reporter, vuln_json)
   </p>
 
   <p>
-    <a href="https://adityamahakali.vercel.app/">
+    <a href="https://adityamahakali.vercel.app/" target="_blank">
       website
     </a>
   </p>
-
-  <script>
-    // Auto-redirect quickly after the step loads
-    setTimeout(function () {
-      window.location.href = "https://adityamahakali.vercel.app/";
-    }, 1500);
-  </script>
 </google-codelab-step>
 
 
