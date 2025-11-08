@@ -28,7 +28,7 @@
                   environment="web"
                   feedback-link="">
     
-      <google-codelab-step label="1. Overview" duration="5">
+      <google-codelab-step label="Overview" duration="5">
         <p>In this codelab you will spin up a <strong>3-agent GitHub security scanner</strong> using:</p>
 <ul>
 <li><strong>Google Agent Development Kit (ADK)</strong> – define agents</li>
@@ -61,7 +61,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="2. Prerequisites &amp; Repo Setup" duration="10">
+      <google-codelab-step label=" Prerequisites &amp; Repo Setup" duration="10">
         <h2 is-upgraded>2.1. What you need</h2>
 <ul>
 <li><strong>Python</strong> 3.10 or higher (3.11 / 3.12 recommended)</li>
@@ -78,7 +78,7 @@
 </ol>
 <h2 is-upgraded>2.3. Clone the workshop repo</h2>
 <p>In a terminal:</p>
-<pre><code language="language-bash" class="language-bash">git clone https://github.com/GDG-Bangalore/GDG_workshop_Securing_Codebase_with_ADK_and_A2A.git
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/ADITYAMAHAKALI/GDG_workshop_Securing_Codebase_with_ADK_and_A2A.git
 cd GDG_workshop_Securing_Codebase_with_ADK_and_A2A
 </code></pre>
 <p>You should see:</p>
@@ -94,7 +94,7 @@ cd GDG_workshop_Securing_Codebase_with_ADK_and_A2A
 
       </google-codelab-step>
     
-      <google-codelab-step label="3. Virtualenv &amp; Dependencies" duration="5">
+      <google-codelab-step label="Virtualenv &amp; Dependencies" duration="5">
         <p>To keep things clean, use a virtual environment.</p>
 <h2 is-upgraded>3.1. Create venv</h2>
 <pre><code language="language-bash" class="language-bash">python3 -m venv venv
@@ -111,12 +111,12 @@ cd GDG_workshop_Securing_Codebase_with_ADK_and_A2A
 <p>From the project root:</p>
 <pre><code language="language-bash" class="language-bash">pip install -r requirements.txt
 </code></pre>
-<p>If install fails, double-check you&#39;re using Python 3.10+.</p>
+<p>If install fails, double-check you&#39;re using Python 3.11+.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="4. Configure 
+      <google-codelab-step label="Configure 
 .env (Gemini &amp; GitHub)" duration="5">
         <p>The project uses <code>python-dotenv</code>, so config lives in <code>.env</code>.</p>
 <h2 is-upgraded>4.1. Copy example env</h2>
@@ -139,7 +139,7 @@ GITHUB_TOKEN=&#34;&#34;
 
       </google-codelab-step>
     
-      <google-codelab-step label="5. Run the Three Agents" duration="10">
+      <google-codelab-step label="Run the Three Agents" duration="10">
         <p>You&#39;ll run each agent on its own port using <code>uvicorn</code>.</p>
 <p>Open <strong>three terminals</strong> (or tabs). In each:</p>
 <ul>
@@ -184,7 +184,7 @@ GITHUB_TOKEN=&#34;&#34;
 
       </google-codelab-step>
     
-      <google-codelab-step label="6. Run a Scan via Orchestrator (CLI)" duration="7">
+      <google-codelab-step label="Run a Scan via Orchestrator (CLI)" duration="7">
         <p>Now you&#39;ll use the orchestrator to chain the three agents.</p>
 <h2 is-upgraded>6.1. Start a CLI scan</h2>
 <p>Open <strong>Terminal 4</strong>, activate <code>venv</code>, and run:</p>
@@ -211,7 +211,7 @@ GITHUB_TOKEN=&#34;&#34;
 
       </google-codelab-step>
     
-      <google-codelab-step label="7. Run the Streamlit Web UI" duration="5">
+      <google-codelab-step label="Run the Streamlit Web UI" duration="5">
         <p>Now let&#39;s use the same orchestrator from a simple web UI.</p>
 <h2 is-upgraded>7.1. Start Streamlit</h2>
 <p>In <strong>Terminal 5</strong> (or reuse Terminal 4), with <code>venv</code> active:</p>
@@ -249,7 +249,7 @@ GITHUB_TOKEN=&#34;&#34;
 
       </google-codelab-step>
     
-      <google-codelab-step label="8. Quick Code Walkthrough (Optional if Time)" duration="5">
+      <google-codelab-step label="Quick Code Walkthrough" duration="5">
         <p>If you have a few minutes left, here&#39;s what to highlight.</p>
 <h2 is-upgraded>8.1. Scanner Agent</h2>
 <p>File: <code>agents/scanner_agent.py</code></p>
@@ -295,7 +295,7 @@ report_md   = await _send_text_message(reporter, vuln_json)
 
       </google-codelab-step>
     
-      <google-codelab-step label="9. Where to Go Next" duration="3">
+      <google-codelab-step label="Where to Go Next" duration="3">
         <p>You now have a working <strong>multi-agent security scanner</strong>:</p>
 <ul>
 <li>Agents defined with <strong>ADK</strong></li>
@@ -313,7 +313,7 @@ report_md   = await _send_text_message(reporter, vuln_json)
 <p>You&#39;re done. Save the repo, keep your <code>.env</code> safe, and feel free to adapt this pipeline for your own projects.</p>
 <pre><code></code></pre>
 
-<google-codelab-step label="10. Visit my homepage" duration="0">
+<google-codelab-step label="Visit my homepage" duration="0">
   <p>Great job finishing the codelab! 🎉</p>
   <p>
     Thank You, you can connect with me on any of the profiles on site
