@@ -4,7 +4,7 @@ import argparse
 import time
 from uuid import uuid4
 import httpx
-
+import os
 from a2a.client import A2ACardResolver, A2AClient
 from a2a.types import Message, MessageSendParams, Part, Role, SendMessageRequest, TextPart
 from utils.logger_config import setup_logger
@@ -98,3 +98,6 @@ if __name__ == "__main__":
     report = run_scan_sync(args.url)
     logger.info("\n" + "="*60 + "\nFINAL SECURITY REPORT\n" +
                 "="*60 + f"\n\n{report}")
+    os.makedirs("reports", exist_ok=True)
+    with open("reports"+f'/{args.url.replace("://", "_").replace("/", "_") + ".md"}', "w") as f:
+        f.write(report)
