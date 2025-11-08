@@ -1,0 +1,321 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Securing Your Codebase with ADK, A2A &amp; Gemini (45 min)</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="gdg-secure-codebase-adk-a2a-45"
+                  title="Securing Your Codebase with ADK, A2A &amp; Gemini (45 min)"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="1. Overview" duration="5">
+        <p>In this codelab you will spin up a <strong>3-agent GitHub security scanner</strong> using:</p>
+<ul>
+<li><strong>Google Agent Development Kit (ADK)</strong> – define agents</li>
+<li><strong>Agent2Agent (A2A)</strong> – expose them as HTTP services</li>
+<li><strong>Gemini</strong> – analyze code &amp; configs</li>
+<li><strong>gitingest</strong> – ingest GitHub repos without manual cloning</li>
+<li><strong>Streamlit</strong> – simple web UI</li>
+</ul>
+<p>The pipeline:</p>
+<ol type="1">
+<li><strong>Scanner Agent</strong> → ingests a GitHub repo (<code>gitingest</code>)</li>
+<li><strong>Analyzer Agent</strong> → uses Gemini to find security issues</li>
+<li><strong>Reporter Agent</strong> → turns findings into Markdown</li>
+<li><strong>Orchestrator / Streamlit</strong> → glues everything and shows the report</li>
+</ol>
+<p>You&#39;ll:</p>
+<ul>
+<li>Run all three agents locally</li>
+<li>Trigger a scan from CLI</li>
+<li>Trigger a scan from a Streamlit UI</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="2. Prerequisites &amp; Repo Setup" duration="10">
+        <h2 is-upgraded>2.1. What you need</h2>
+<ul>
+<li><strong>Python</strong> 3.10 or higher (3.11 / 3.12 recommended)</li>
+<li><strong>Git</strong> installed</li>
+<li>A <strong>Gemini API key</strong> (organizer may provide or ask you to create one)</li>
+</ul>
+<h2 is-upgraded>2.2. Get a Gemini API key</h2>
+<p>If you don&#39;t already have one:</p>
+<ol type="1">
+<li>Go to <code>https://ai.google.dev</code></li>
+<li>Sign in with your Google account</li>
+<li>Create an API key</li>
+<li>Copy it (you&#39;ll paste it into <code>.env</code>)</li>
+</ol>
+<h2 is-upgraded>2.3. Clone the workshop repo</h2>
+<p>In a terminal:</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/GDG-Bangalore/GDG_workshop_Securing_Codebase_with_ADK_and_A2A.git
+cd GDG_workshop_Securing_Codebase_with_ADK_and_A2A
+</code></pre>
+<p>You should see:</p>
+<pre><code language="language-text" class="language-text">.
+├── orchestrator.py
+├── streamlit_app.py
+├── agents/
+├── utils/
+├── reports/
+└── .env.example
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="3. Virtualenv &amp; Dependencies" duration="5">
+        <p>To keep things clean, use a virtual environment.</p>
+<h2 is-upgraded>3.1. Create venv</h2>
+<pre><code language="language-bash" class="language-bash">python3 -m venv venv
+</code></pre>
+<h2 is-upgraded>3.2. Activate venv</h2>
+<p><strong>macOS / Linux:</strong></p>
+<pre><code language="language-bash" class="language-bash">source venv/bin/activate
+</code></pre>
+<p><strong>Windows (PowerShell):</strong></p>
+<pre><code language="language-powershell" class="language-powershell">.\venv\Scripts\Activate.ps1
+</code></pre>
+<p>Make sure you see <code>(venv)</code> at the start of your terminal prompt.</p>
+<h2 is-upgraded>3.3. Install dependencies</h2>
+<p>From the project root:</p>
+<pre><code language="language-bash" class="language-bash">pip install -r requirements.txt
+</code></pre>
+<p>If install fails, double-check you&#39;re using Python 3.10+.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="4. Configure 
+.env (Gemini &amp; GitHub)" duration="5">
+        <p>The project uses <code>python-dotenv</code>, so config lives in <code>.env</code>.</p>
+<h2 is-upgraded>4.1. Copy example env</h2>
+<pre><code language="language-bash" class="language-bash">cp .env.example .env
+</code></pre>
+<h2 is-upgraded>4.2. Edit <code>.env</code></h2>
+<p>Open <code>.env</code> and set your key:</p>
+<pre><code language="language-env" class="language-env">GOOGLE_API_KEY=&#34;YOUR_REAL_GEMINI_API_KEY&#34;
+GOOGLE_GENAI_USE_VERTEXAI=FALSE
+
+# Optional: only if you want to scan private repos
+GITHUB_TOKEN=&#34;&#34;
+</code></pre>
+<ul>
+<li><code>GOOGLE_API_KEY</code> is required for Gemini calls</li>
+<li><code>GITHUB_TOKEN</code> is optional and used by <code>gitingest</code> for private repos</li>
+</ul>
+<p>Save the file.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="5. Run the Three Agents" duration="10">
+        <p>You&#39;ll run each agent on its own port using <code>uvicorn</code>.</p>
+<p>Open <strong>three terminals</strong> (or tabs). In each:</p>
+<ul>
+<li><code>cd</code> into the project root</li>
+<li>Activate the <code>venv</code> (<code>source venv/bin/activate</code> or <code>.\venv\Scripts\Activate.ps1</code>)</li>
+</ul>
+<h2 is-upgraded>5.1. Scanner Agent (port 8001)</h2>
+<p><strong>Terminal 1:</strong></p>
+<pre><code language="language-bash" class="language-bash">uvicorn agents.scanner_agent:a2a_app --port 8001 --reload
+</code></pre>
+<p>This agent:</p>
+<ul>
+<li>Accepts a GitHub URL</li>
+<li>Calls <code>gitingest</code></li>
+<li>Returns a <strong>RepoDigest JSON</strong> (summary, tree, content)</li>
+</ul>
+<h2 is-upgraded>5.2. Analyzer Agent (port 8002)</h2>
+<p><strong>Terminal 2:</strong></p>
+<pre><code language="language-bash" class="language-bash">uvicorn agents.analyzer_agent:a2a_app --port 8002 --reload
+</code></pre>
+<p>This agent:</p>
+<ul>
+<li>Accepts the RepoDigest JSON</li>
+<li>Uses <strong>Gemini Pro</strong> to look for security issues</li>
+<li>Returns a <strong>vulnerability report JSON</strong></li>
+</ul>
+<h2 is-upgraded>5.3. Reporter Agent (port 8003)</h2>
+<p><strong>Terminal 3:</strong></p>
+<pre><code language="language-bash" class="language-bash">uvicorn agents.reporter_agent:a2a_app --port 8003 --reload
+</code></pre>
+<p>This agent:</p>
+<ul>
+<li>Accepts the vulnerability JSON</li>
+<li>Uses <strong>Gemini Flash</strong> to output a <strong>Markdown report</strong></li>
+</ul>
+<p>If any agent crashes:</p>
+<ul>
+<li>Check <code>.env</code> has a valid <code>GOOGLE_API_KEY</code></li>
+<li>Check <code>pip install -r requirements.txt</code> completed successfully</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="6. Run a Scan via Orchestrator (CLI)" duration="7">
+        <p>Now you&#39;ll use the orchestrator to chain the three agents.</p>
+<h2 is-upgraded>6.1. Start a CLI scan</h2>
+<p>Open <strong>Terminal 4</strong>, activate <code>venv</code>, and run:</p>
+<pre><code language="language-bash" class="language-bash">python orchestrator.py --url https://github.com/ADITYAMAHAKALI/gdg-vuln-sample-repo
+</code></pre>
+<p>What happens:</p>
+<ol type="1">
+<li>Orchestrator discovers the three agents via A2A</li>
+<li>Sends the repo URL to <strong>Scanner</strong></li>
+<li>Sends scanner output to <strong>Analyzer</strong></li>
+<li>Sends analyzer output to <strong>Reporter</strong></li>
+<li>Prints the Markdown report in the terminal</li>
+<li>Saves it under <code>reports/</code> as a <code>.md</code> file</li>
+</ol>
+<h2 is-upgraded>6.2. Verify the report</h2>
+<p>List the <code>reports</code> directory:</p>
+<pre><code language="language-bash" class="language-bash">ls reports
+</code></pre>
+<p>You should see a file like:</p>
+<pre><code language="language-text" class="language-text">https_github.com_ADITYAMAHAKALI_gdg-vuln-sample-repo.md
+</code></pre>
+<p>Open it in your editor / viewer to quickly inspect the findings.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="7. Run the Streamlit Web UI" duration="5">
+        <p>Now let&#39;s use the same orchestrator from a simple web UI.</p>
+<h2 is-upgraded>7.1. Start Streamlit</h2>
+<p>In <strong>Terminal 5</strong> (or reuse Terminal 4), with <code>venv</code> active:</p>
+<pre><code language="language-bash" class="language-bash">streamlit run streamlit_app.py
+</code></pre>
+<p>You&#39;ll see an address like:</p>
+<pre><code language="language-text" class="language-text">Local URL: http://localhost:8501
+</code></pre>
+<p>Open it in your browser.</p>
+<h2 is-upgraded>7.2. Use the UI</h2>
+<ol type="1">
+<li>Confirm that all agents are still running on:<ul>
+<li>8001 → scanner</li>
+<li>8002 → analyzer</li>
+<li>8003 → reporter</li>
+</ul>
+</li>
+<li>In the Streamlit UI:<ul>
+<li>Paste a GitHub repo URL, e.g.:<pre><code language="language-text" class="language-text">https://github.com/ADITYAMAHAKALI/gdg-vuln-sample-repo
+</code></pre>
+</li>
+<li>Click <strong>Run Scan</strong></li>
+</ul>
+</li>
+<li>Wait for the spinner to finish</li>
+<li>Read the Markdown report directly in the browser</li>
+<li>Click <strong>Download</strong> to save the report as <code>.md</code></li>
+</ol>
+<p>If you see an error in Streamlit:</p>
+<ul>
+<li>Ensure the agents are running</li>
+<li>Ensure <code>.env</code> is correctly set with <code>GOOGLE_API_KEY</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="8. Quick Code Walkthrough (Optional if Time)" duration="5">
+        <p>If you have a few minutes left, here&#39;s what to highlight.</p>
+<h2 is-upgraded>8.1. Scanner Agent</h2>
+<p>File: <code>agents/scanner_agent.py</code></p>
+<ul>
+<li>Wraps <code>gitingest_repo(repo_url)</code></li>
+<li>ADK <code>Agent</code> with a <code>scan_repo</code> tool</li>
+<li>Instruction forces the agent to:<ul>
+<li>Call the tool exactly once</li>
+<li>Return only the JSON</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>8.2. Analyzer Agent</h2>
+<p>File: <code>agents/analyzer_agent.py</code></p>
+<ul>
+<li>Configures <code>google.generativeai</code> with your key</li>
+<li>Uses <code>gemini-2.5-pro</code></li>
+<li>System prompt describes:<ul>
+<li>What patterns to treat as risky (secrets, unsafe HTTP, etc.)</li>
+<li>How to structure the JSON (<code>repo_summary</code>, <code>findings[]</code>)</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>8.3. Reporter Agent</h2>
+<p>File: <code>agents/reporter_agent.py</code></p>
+<ul>
+<li>Based on the vulnerability JSON, produces Markdown</li>
+<li>Uses emojis for severity</li>
+<li>Outputs developer-friendly sections</li>
+</ul>
+<h2 is-upgraded>8.4. Orchestrator</h2>
+<p>File: <code>orchestrator.py</code></p>
+<ul>
+<li>Uses <code>A2ACardResolver</code> to discover agents</li>
+<li>Uses a shared HTTP client for performance</li>
+<li>Chains:<pre><code language="language-python" class="language-python">repo_digest = await _send_text_message(scanner, repo_url)
+vuln_json   = await _send_text_message(analyzer, repo_digest)
+report_md   = await _send_text_message(reporter, vuln_json)
+</code></pre>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="9. Where to Go Next" duration="3">
+        <p>You now have a working <strong>multi-agent security scanner</strong>:</p>
+<ul>
+<li>Agents defined with <strong>ADK</strong></li>
+<li>Interoperability via <strong>A2A</strong></li>
+<li>Security analysis via <strong>Gemini</strong></li>
+<li>CLI + <strong>Streamlit</strong> front-ends</li>
+</ul>
+<p>Some ideas to extend after the workshop:</p>
+<ul>
+<li>Run scans automatically in <strong>CI/CD</strong> and post results as PR comments</li>
+<li>Add a <strong>Secrets-only agent</strong> or <strong>Dependency-focused agent</strong></li>
+<li>Re-implement one agent in <strong>another language</strong> (Go, Java) and still talk via A2A</li>
+<li>Customize prompts to reflect your org&#39;s own security policies</li>
+</ul>
+<p>You&#39;re done. Save the repo, keep your <code>.env</code> safe, and feel free to adapt this pipeline for your own projects.</p>
+<pre><code></code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

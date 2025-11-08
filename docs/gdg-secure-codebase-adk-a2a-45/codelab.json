@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-11-08T09:01:13+05:30",
+  "id": "gdg-secure-codebase-adk-a2a-45",
+  "duration": 55,
+  "title": "Securing Your Codebase with ADK, A2A \u0026 Gemini (45 min)",
+  "authors": "Aditya Mahakali (",
+  "summary": "Securing Your Codebase with ADK, A2A \u0026 Gemini (45 min)",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "ai",
+    "security",
+    "backend"
+  ],
+  "tags": [
+    "a2a",
+    "adk",
+    "gemini",
+    "gitingest",
+    "python",
+    "streamlit"
+  ],
+  "url": "gdg-secure-codebase-adk-a2a-45"
+}
